@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Configuration
     const config = {
         // Set this to true when GitHub Actions integration is ready
-        enableBackgroundRemoval: false,
+        enableBackgroundRemoval: true,
         // Replace with your GitHub token when ready to use
         githubToken: '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',
         // Replace with your GitHub username

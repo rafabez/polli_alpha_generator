@@ -22,13 +22,32 @@ jobs:
         python -m pip install --upgrade pip
         pip install backgroundremover pillow requests
 
+    - name: Create directories
+      run: |
+        mkdir -p images
+        mkdir -p processed_images
+        
     - name: Download image
       run: |
         python scripts/download_image.py "${{ github.event.client_payload.image_url }}"
+      
+    - name: Debug check
+      run: |
+        echo "Current directory contents:"
+        ls -la
+        echo "Images directory contents:"
+        ls -la images || echo "Images directory not found or empty"
+        echo "Current image path:"
+        cat current_image.txt || echo "current_image.txt not found"
         
     - name: Remove background
       run: |
         python scripts/remove_background.py
+      
+    - name: Check processed image
+      run: |
+        echo "Processed images directory contents:"
+        ls -la processed_images || echo "No processed images found"
         
     - name: Commit and push processed image
       run: |

@@ -24,10 +24,28 @@ def remove_background():
     
     # Remove background using backgroundremover library
     try:
-        remove(input_path, output_path)
+        # Handle file paths as binary data
+        with open(input_path, 'rb') as input_file:
+            input_data = input_file.read()
+            
+            # Use an intermediate temporary file if needed
+            temp_output_path = output_path + ".tmp"
+            
+            # Use the remove function with binary data 
+            remove(input_data, temp_output_path)
+            
+            # Rename the temp file to the final output path
+            if os.path.exists(temp_output_path):
+                if os.path.exists(output_path):
+                    os.remove(output_path)
+                os.rename(temp_output_path, output_path)
+                
         print(f"Background removed successfully. Saved as {output_path}")
     except Exception as e:
         print(f"Error removing background: {e}")
+        # Print more detailed error information
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
     
     # Save the processed image path for future reference

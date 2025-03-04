@@ -3,34 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Generator with Background Removal</title>
+    <title>Transparent PNG Image Generator</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="sky-background"></div>
+    <div class="space-background"></div>
     
-    <div class="container">
-        <h1>Image Generator</h1>
+    <div class="app-container">
+        <header>
+            <h1>Transparent PNG Space Image Generator</h1>
+        </header>
         
-        <div class="info-banner">
-            <p>All images are generated in cartoon/comic book style with white background</p>
-        </div>
+        <main>
+            <div class="image-container">
+                <div id="loading-indicator" class="loading-indicator hidden"></div>
+                <img id="generated-image" class="hidden" alt="Generated image will appear here">
+            </div>
+            
+            <div class="status-container">
+                <div id="status-message">Select a space element and style</div>
+            </div>
+        </main>
         
-        <div class="generator-controls">
-            <input type="text" id="prompt-input" placeholder="Enter subject to draw (e.g. 'a cat playing guitar')" />
-            <button id="generate-btn">Generate Image</button>
-        </div>
-        
-        <div class="image-container">
-            <div id="loading-indicator" class="hidden">Generating image...</div>
-            <img id="generated-image" class="hidden" alt="Generated image" />
-        </div>
-        
-        <div class="status-container">
-            <p id="status-message"></p>
-        </div>
+        <footer>
+            <div class="controls-container">
+                <div class="input-wrapper">
+                    <div class="space-element-selector">
+                        <label for="element-select">Space Element:</label>
+                        <select id="element-select">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+                <div class="right-controls">
+                    <div class="style-selector">
+                        <label for="style-select">Style:</label>
+                        <select id="style-select">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <button id="generate-btn">Generate</button>
+                </div>
+            </div>
+        </footer>
     </div>
-
+    
     <script src="app.js"></script>
 </body>
 </html>

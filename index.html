@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Generator with Background Removal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="sky-background"></div>
+    
+    <div class="container">
+        <h1>Image Generator</h1>
+        
+        <div class="info-banner">
+            <p>All images are generated in cartoon/comic book style with white background</p>
+        </div>
+        
+        <div class="generator-controls">
+            <input type="text" id="prompt-input" placeholder="Enter subject to draw (e.g. 'a cat playing guitar')" />
+            <button id="generate-btn">Generate Image</button>
+        </div>
+        
+        <div class="image-container">
+            <div id="loading-indicator" class="hidden">Generating image...</div>
+            <img id="generated-image" class="hidden" alt="Generated image" />
+        </div>
+        
+        <div class="status-container">
+            <p id="status-message"></p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

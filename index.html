@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transparent PNG Image Generator</title>
+    <title>Space Is the Place</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,13 +11,12 @@
     
     <div class="app-container">
         <header>
-            <h1>Transparent PNG Space Image Generator</h1>
+            <h1>Space Is The Place</h1>
         </header>
         
         <main>
-            <div class="image-container">
-                <div id="loading-indicator" class="loading-indicator hidden"></div>
-                <img id="generated-image" class="hidden" alt="Generated image will appear here">
+            <div id="space-scene" class="space-scene" style="position: relative;">
+                <!-- Generated elements will be added here -->
             </div>
             
             <div class="status-container">
@@ -43,10 +42,13 @@
                         </select>
                     </div>
                     <button id="generate-btn">Generate</button>
+                    <button id="clear-all-btn" class="clear-btn">Clear All Elements</button>
                 </div>
             </div>
         </footer>
     </div>
+    
+    <div id="loading-indicator" class="loading-indicator hidden"></div>
     
     <script src="app.js"></script>
 </body>

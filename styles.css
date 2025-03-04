@@ -216,6 +216,13 @@ footer {
     z-index: 15;
 }
 
+.control-group {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    align-items: center;
+}
+
 .input-wrapper {
     flex: 1;
 }
@@ -232,7 +239,7 @@ footer {
     display: flex;
     align-items: center;
     gap: 10px;
-    width: 100%;
+    flex: 1;
 }
 
 .space-element-selector label {
@@ -253,7 +260,7 @@ footer {
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 10px center;
-    background-size: 15px;
+    background-size: 20px;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -276,28 +283,28 @@ footer {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 5px;
+    flex: 1;
 }
 
 .style-selector label {
     font-size: 0.9rem;
     color: white;
-    min-width: 40px;
+    min-width: 50px;
 }
 
 #style-select {
     width: 100%;
-    padding: 8px 10px;
+    padding: 10px 15px;
     border: none;
     border-radius: 8px;
     background-color: rgba(255, 255, 255, 0.1);
     color: white;
-    font-size: 0.9rem;
+    font-size: 1rem;
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 10px center;
-    background-size: 15px;
+    background-size: 20px;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -498,6 +505,10 @@ button:active {
     
     .right-controls {
         width: 100%;
+    }
+    
+    .control-group {
+        flex-direction: column;
     }
     
     h1 {

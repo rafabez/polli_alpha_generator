@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set this to true when GitHub Actions integration is ready
         enableBackgroundRemoval: true,
         // Replace with your GitHub token when ready to use
-        githubToken: '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',
+        githubToken: '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',
         // Replace with your GitHub username
         githubUsername: 'rafabez',
         // Repository name
@@ -99,12 +99,15 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStatus('Sending image for background removal...', 'info');
         
         try {
+            // For debugging - log the URL and headers (without the token)
+            console.log(`Attempting to send request to: https://api.github.com/repos/${config.githubUsername}/${config.repoName}/dispatches`);
+            
             const response = await fetch(
                 `https://api.github.com/repos/${config.githubUsername}/${config.repoName}/dispatches`,
                 {
                     method: 'POST',
                     headers: {
-                        'Authorization': `token ${config.githubToken}`,
+                        'Authorization': `Bearer ${config.githubToken}`,
                         'Accept': 'application/vnd.github.v3+json',
                         'Content-Type': 'application/json'
                     },
@@ -119,9 +122,26 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (response.status === 204) {
                 updateStatus('Image sent for processing! Check back soon for the result.', 'success');
+                console.log('Successfully triggered GitHub Actions workflow');
             } else {
-                updateStatus('Failed to trigger background removal process.', 'error');
-                console.error('GitHub API response:', response.status);
+                let errorText = '';
+                try {
+                    const errorData = await response.text();
+                    errorText = ` - ${errorData}`;
+                } catch (e) {
+                    // Ignore error parsing
+                }
+                
+                updateStatus(`Failed to trigger background removal process (${response.status}).`, 'error');
+                console.error(`GitHub API response: ${response.status}${errorText}`);
+                
+                if (response.status === 403) {
+                    console.log('Possible issues: 1) Repository does not exist yet 2) Token needs proper permissions 3) Token format is incorrect');
+                    updateStatus('GitHub token permission error. Check console for details.', 'error');
+                } else if (response.status === 404) {
+                    console.log('Repository not found. Make sure it exists and is spelled correctly.');
+                    updateStatus('Repository not found. Check console for details.', 'error');
+                }
             }
         } catch (error) {
             updateStatus('Error connecting to GitHub API.', 'error');

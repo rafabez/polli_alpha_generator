@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingIndicator = document.getElementById('loading-indicator');
     const statusMessage = document.getElementById('status-message');
     const styleSelect = document.getElementById('style-select');
+    const sizeSelect = document.getElementById('size-select');
     const spaceScene = document.getElementById('space-scene');
     const clearAllBtn = document.getElementById('clear-all-btn');
     const spaceBackground = document.querySelector('.space-background');
@@ -106,12 +107,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Event listeners
+    // Initialize status message
+    updateStatusMessage();
+    
+    // Set up event listeners
     generateBtn.addEventListener('click', generateImage);
     elementSelect.addEventListener('change', updateStatusMessage);
     styleSelect.addEventListener('change', updateStatusMessage);
     clearAllBtn.addEventListener('click', clearAllElements);
     
+    // Initialize sidebar toggle functionality
+    initSidebarToggle();
+    
+    // Create twinkling stars background
+    createTwinklingStars();
+    
+    // Initialize by populating dropdowns
+    populateDropdowns();
+
     /**
      * Clears all elements from the space scene
      */
@@ -126,18 +139,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateStatusMessage() {
         const element = elementSelect.options[elementSelect.selectedIndex].text;
         const style = styleSelect.options[styleSelect.selectedIndex].text;
-        statusMessage.textContent = `Ready to generate a ${style} style ${element}`;
+        const size = sizeSelect.options[sizeSelect.selectedIndex].text;
+        statusMessage.textContent = `Ready to generate a ${style} style ${element} (${size})`;
         statusMessage.className = 'info';
     }
     
-    // Initialize status message
-    updateStatusMessage();
-
     /**
      * Main function to generate an image based on the selected element and style
      */
     async function generateImage() {
         const selectedElement = elementSelect.value;
+        const selectedStyle = styleSelect.value;
+        const selectedSize = sizeSelect.value;
         
         if (!selectedElement) {
             updateStatus('Please select a space element first', 'error');
@@ -150,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Get the selected style and space element
-            const selectedStyle = styleSelect.value;
             const stylePrompt = config.styles[selectedStyle] || config.styles.cartoon;
             const elementPrompt = config.spaceElements[selectedElement] || selectedElement;
             
@@ -205,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const transparentImageUrl = URL.createObjectURL(transparentImageBlob);
                 
                 // Add the new image to the space scene
-                addElementToScene(transparentImageUrl, selectedElement);
+                addElementToScene(transparentImageUrl, selectedElement, selectedSize);
                 
                 loadingIndicator.classList.add('hidden');
                 updateStatus('Your space artwork is ready!', 'success');
@@ -215,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateStatus('Error removing background. Using original image.', 'error');
                 
                 // If background removal fails, use the original image
-                addElementToScene(generatedImageUrl, selectedElement);
+                addElementToScene(generatedImageUrl, selectedElement, selectedSize);
                 
                 loadingIndicator.classList.add('hidden');
             }
@@ -413,8 +425,9 @@ document.addEventListener('DOMContentLoaded', () => {
      * Adds a new element to the space scene
      * @param {string} imageUrl - The URL of the image to add
      * @param {string} elementType - The type of element
+     * @param {string} sizePreference - The user's size preference (small, medium, large)
      */
-    function addElementToScene(imageUrl, elementType) {
+    function addElementToScene(imageUrl, elementType, sizePreference = 'medium') {
         // Create a new image element
         const newElement = document.createElement('img');
         newElement.src = imageUrl;
@@ -430,24 +443,25 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add to the scene first so we can get proper dimensions
         spaceScene.appendChild(newElement);
         
-        // Position element appropriately based on type
-        positionElementByType(newElement, elementType);
+        // Position element appropriately based on type and size preference
+        positionElementByType(newElement, elementType, sizePreference);
         
         // Make element draggable
         makeDraggable(newElement);
     }
     
     /**
-     * Positions an element based on its type
+     * Positions an element based on its type and size preference
      * @param {HTMLElement} element - The element to position
      * @param {string} elementType - The type of element
+     * @param {string} sizePreference - The user's size preference (small, medium, large)
      */
-    function positionElementByType(element, elementType) {
+    function positionElementByType(element, elementType, sizePreference) {
         const sceneRect = spaceScene.getBoundingClientRect();
         const padding = 20; // padding from edges
         
-        // Random size based on element type
-        let randomSize;
+        // Calculate size based on element type and user preference
+        const size = calculateSizeForElement(elementType, sizePreference);
         
         // Get the element category
         const category = getCategoryForElement(elementType);
@@ -455,46 +469,41 @@ document.addEventListener('DOMContentLoaded', () => {
         switch(category) {
             case 'planet':
                 // Planets are larger
-                randomSize = Math.floor(Math.random() * 80) + 80; // 80-160px
                 // Position planet in the scene (anywhere)
-                positionRandomly(element, sceneRect, randomSize);
+                positionRandomly(element, sceneRect, size);
                 break;
                 
             case 'star':
                 if (elementType === 'Sun') {
                     // Sun should be larger
-                    randomSize = Math.floor(Math.random() * 100) + 150; // 150-250px
                     // Position sun near the edge
-                    const sunX = Math.random() < 0.5 ? padding : sceneRect.width - randomSize - padding;
-                    const sunY = Math.random() * (sceneRect.height - randomSize - padding * 2) + padding;
-                    positionElement(element, sunX, sunY, randomSize);
+                    const sunX = Math.random() < 0.5 ? padding : sceneRect.width - size - padding;
+                    const sunY = Math.random() * (sceneRect.height - size - padding * 2) + padding;
+                    positionElement(element, sunX, sunY, size);
                 } else {
                     // Other stars are smaller
-                    randomSize = Math.floor(Math.random() * 30) + 20; // 20-50px
                     // Stars positioned anywhere
-                    positionRandomly(element, sceneRect, randomSize);
+                    positionRandomly(element, sceneRect, size);
                 }
                 break;
                 
             case 'spaceship':
             case 'rocket':
                 // Spaceships and rockets are medium sized
-                randomSize = Math.floor(Math.random() * 40) + 60; // 60-100px
                 // Position at the scene sides to allow for fly-through animation
-                const spaceshipX = Math.random() < 0.5 ? -randomSize/2 : sceneRect.width - randomSize/2;
-                const spaceshipY = Math.random() * (sceneRect.height - randomSize - padding * 2) + padding;
-                positionElement(element, spaceshipX, spaceshipY, randomSize);
+                const spaceshipX = Math.random() < 0.5 ? -size/2 : sceneRect.width - size/2;
+                const spaceshipY = Math.random() * (sceneRect.height - size - padding * 2) + padding;
+                positionElement(element, spaceshipX, spaceshipY, size);
                 break;
                 
             case 'comet':
             case 'meteor':
             case 'asteroid':
                 // These are smaller
-                randomSize = Math.floor(Math.random() * 30) + 30; // 30-60px
                 // Position at the scene sides for fly-through animation
-                const meteorX = -randomSize; // Start offscreen
-                const meteorY = Math.random() * (sceneRect.height - randomSize - padding * 2) + padding;
-                positionElement(element, meteorX, meteorY, randomSize);
+                const meteorX = -size; // Start offscreen
+                const meteorY = Math.random() * (sceneRect.height - size - padding * 2) + padding;
+                positionElement(element, meteorX, meteorY, size);
                 
                 // For these elements, add a different animation that crosses the screen
                 element.style.animation = 'flyAcross 10s linear infinite';
@@ -504,27 +513,24 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'satellite':
             case 'station':
                 // These are medium sized
-                randomSize = Math.floor(Math.random() * 50) + 50; // 50-100px
                 // Position in the upper part of the scene
-                const stationX = Math.random() * (sceneRect.width - randomSize - padding * 2) + padding;
-                const stationY = Math.random() * (sceneRect.height / 2 - randomSize - padding) + padding;
-                positionElement(element, stationX, stationY, randomSize);
+                const stationX = Math.random() * (sceneRect.width - size - padding * 2) + padding;
+                const stationY = Math.random() * (sceneRect.height / 2 - size - padding) + padding;
+                positionElement(element, stationX, stationY, size);
                 break;
                 
             case 'alien':
             case 'astronaut':
                 // These are medium sized
-                randomSize = Math.floor(Math.random() * 40) + 40; // 40-80px
                 // Position anywhere
-                positionRandomly(element, sceneRect, randomSize);
+                positionRandomly(element, sceneRect, size);
                 break;
                 
             case 'celestial':
             default:
                 // Default random size
-                randomSize = Math.floor(Math.random() * 64) + 64; // 64-128px
                 // Position anywhere
-                positionRandomly(element, sceneRect, randomSize);
+                positionRandomly(element, sceneRect, size);
                 break;
         }
     }
@@ -560,6 +566,81 @@ document.addEventListener('DOMContentLoaded', () => {
         element.style.zIndex = Math.floor(Math.random() * 10) + 20; // Random z-index starting at 20
     }
     
+    /**
+     * Calculates the size for an element based on its type and user preference
+     * @param {string} elementType - The type of element
+     * @param {string} sizePreference - The user's size preference (small, medium, large)
+     * @returns {number} - The calculated size in pixels
+     */
+    function calculateSizeForElement(elementType, sizePreference) {
+        // Base size multipliers for each preference
+        const sizeMultipliers = {
+            small: 0.7,
+            medium: 1.0,
+            large: 1.4
+        };
+        
+        const multiplier = sizeMultipliers[sizePreference] || 1.0;
+        
+        // Base sizes for different categories
+        let baseSize;
+        
+        switch (elementType) {
+            case 'Sun':
+                baseSize = Math.floor(Math.random() * 100) + 150; // 150-250px
+                break;
+            case 'Earth':
+            case 'Mars':
+            case 'Venus':
+            case 'Jupiter':
+            case 'Saturn':
+            case 'Pluto':
+                baseSize = Math.floor(Math.random() * 80) + 80; // 80-160px
+                break;
+            case 'Moon':
+                baseSize = Math.floor(Math.random() * 40) + 40; // 40-80px
+                break;
+            case 'Comet':
+            case 'Meteor':
+            case 'Asteroid':
+                baseSize = Math.floor(Math.random() * 30) + 30; // 30-60px
+                break;
+            case 'Black Hole':
+            case 'Nebula':
+            case 'Galaxy':
+            case 'Supernova':
+            case 'Quasar':
+                baseSize = Math.floor(Math.random() * 50) + 100; // 100-150px
+                break;
+            case 'Spaceship':
+            case 'Space Station':
+            case 'Satellite':
+            case 'Space Telescope':
+            case 'Lunar Rover':
+            case 'Space Shuttle':
+            case 'Rocket':
+            case 'Space Probe':
+            case 'Space Capsule':
+                baseSize = Math.floor(Math.random() * 40) + 60; // 60-100px
+                break;
+            case 'Alien':
+            case 'UFO':
+            case 'Robot':
+            case 'Space Colony':
+            case 'Wormhole':
+            case 'Portal':
+            case 'Astronaut':
+            case 'Spacewalk':
+            case 'Space Explorer':
+                baseSize = Math.floor(Math.random() * 40) + 40; // 40-80px
+                break;
+            default:
+                baseSize = Math.floor(Math.random() * 60) + 60; // 60-120px
+        }
+        
+        return Math.floor(baseSize * multiplier);
+    }
+
     /**
      * Determines the appropriate category for an element type
      * @param {string} elementType - The type of element
@@ -695,17 +776,78 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Updates the status message with appropriate styling
+     * Updates the status message
      * @param {string} message - The message to display
-     * @param {string} type - The type of message (info, success, error)
+     * @param {string} type - The type of message (success, error, info)
      */
     function updateStatus(message, type = 'info') {
         statusMessage.textContent = message;
         
-        // Reset classes
+        // Remove all existing classes
         statusMessage.className = '';
         
-        // Add type class
+        // Add the type class
         statusMessage.classList.add(type);
+        
+        // If it's a success message, set a timer to reset to default after fade out
+        if (type === 'success') {
+            // Clear any existing timers
+            if (window.statusResetTimer) {
+                clearTimeout(window.statusResetTimer);
+            }
+            
+            // Set timer to reset status after fadeout animation completes (5s total: 2s delay + 3s animation)
+            window.statusResetTimer = setTimeout(() => {
+                // Check if the user hasn't interacted with the form during the fadeout
+                const element = elementSelect.options[elementSelect.selectedIndex]?.text || '';
+                const style = styleSelect.options[styleSelect.selectedIndex]?.text || '';
+                const size = sizeSelect.options[sizeSelect.selectedIndex]?.text || '';
+                
+                if (element && style && size) {
+                    statusMessage.textContent = `Ready to generate a ${style} style ${element} (${size})`;
+                    statusMessage.className = 'info';
+                    statusMessage.style.opacity = '1';
+                    statusMessage.style.visibility = 'visible';
+                }
+            }, 5000);
+        }
+    }
+
+    // Initialize sidebar toggle functionality
+    function initSidebarToggle() {
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const toggleIcon = sidebarToggle.querySelector('.toggle-icon');
+        
+        // Check if sidebar state is saved in localStorage
+        const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        
+        // Apply saved state
+        if (sidebarCollapsed) {
+            sidebar.classList.add('collapsed');
+            toggleIcon.textContent = '▶';
+        }
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            
+            // Save state to localStorage
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
+            
+            // Update icon based on state
+            toggleIcon.textContent = isCollapsed ? '▶' : '◀';
+        });
+    }
+
+    /**
+     * Populates all dropdown menus with their options
+     */
+    function populateDropdowns() {
+        // Populate space element dropdown
+        populateDropdown(elementSelect, config.spaceElements);
+        
+        // Populate style dropdown
+        populateDropdown(styleSelect, config.styles, true);
     }
 });

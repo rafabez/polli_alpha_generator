@@ -10,45 +10,63 @@
     <div class="space-background"></div>
     
     <div class="app-container">
-        <header>
-            <h1>Space Is The Place</h1>
-        </header>
-        
-        <main>
-            <div id="space-scene" class="space-scene" style="position: relative;">
-                <!-- Generated elements will be added here -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Space Is The Place</h1>
             </div>
             
-            <div class="status-container">
-                <div id="status-message">Select a space element and style</div>
-            </div>
-        </main>
-        
-        <footer>
-            <div class="controls-container">
-                <div class="input-wrapper">
-                    <div class="control-group">
-                        <div class="space-element-selector">
-                            <label for="element-select">Space Element:</label>
-                            <select id="element-select">
-                                <!-- Options will be populated by JavaScript -->
-                            </select>
-                        </div>
-                        
-                        <div class="style-selector">
-                            <label for="style-select">Style:</label>
-                            <select id="style-select">
-                                <!-- Options will be populated by JavaScript -->
-                            </select>
-                        </div>
+            <div class="sidebar-content">
+                <div class="control-group">
+                    <div class="space-element-selector">
+                        <label for="element-select">Space Element:</label>
+                        <select id="element-select">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
                     </div>
                 </div>
-                <div class="right-controls">
+                
+                <div class="control-group">
+                    <div class="style-selector">
+                        <label for="style-select">Style:</label>
+                        <select id="style-select">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="size-selector">
+                        <label for="size-select">Size:</label>
+                        <select id="size-select">
+                            <option value="small">Small</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="buttons-container">
                     <button id="generate-btn">Generate</button>
                     <button id="clear-all-btn" class="clear-btn">Clear All Elements</button>
                 </div>
+                
+                <div class="status-container">
+                    <div id="status-message">Select a space element and style</div>
+                </div>
             </div>
-        </footer>
+            
+            <div class="sidebar-footer">
+                <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Sidebar">
+                    <span class="toggle-icon">◀</span>
+                </button>
+            </div>
+        </aside>
+        
+        <main class="main-content">
+            <div id="space-scene" class="space-scene">
+                <!-- Generated elements will be added here -->
+            </div>
+        </main>
     </div>
     
     <div id="loading-indicator" class="loading-indicator hidden"></div>

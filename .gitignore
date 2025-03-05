@@ -28,9 +28,7 @@ __pycache__/
 *$py.class
 
 # Project-specific directories
-images/
-processed_images/
-
-# Don't track temporary image reference files
+/images/
+/processed_images/
 current_image.txt
 processed_image.txt

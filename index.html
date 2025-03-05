@@ -16,42 +16,57 @@
             </div>
             
             <div class="sidebar-content">
-                <div class="control-group">
-                    <div class="space-element-selector">
-                        <label for="element-select">Space Element:</label>
-                        <select id="element-select">
-                            <!-- Options will be populated by JavaScript -->
-                        </select>
-                    </div>
+                <div class="mobile-controls">
+                    <button id="mobile-controls-toggle" class="mobile-toggle">
+                        <span>Controls</span>
+                        <span class="toggle-icon">▼</span>
+                    </button>
                 </div>
                 
-                <div class="control-group">
-                    <div class="style-selector">
-                        <label for="style-select">Style:</label>
-                        <select id="style-select">
-                            <!-- Options will be populated by JavaScript -->
-                        </select>
+                <div class="controls-container">
+                    <div class="control-group">
+                        <div class="space-element-selector">
+                            <label for="element-select">Space Element:</label>
+                            <select id="element-select">
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="control-group">
-                    <div class="size-selector">
-                        <label for="size-select">Size:</label>
-                        <select id="size-select">
-                            <option value="small">Small</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="large">Large</option>
-                        </select>
+                    
+                    <div class="control-group">
+                        <div class="style-selector">
+                            <label for="style-select">Style:</label>
+                            <select id="style-select">
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="buttons-container">
-                    <button id="generate-btn">Generate</button>
-                    <button id="clear-all-btn" class="clear-btn">Clear All Elements</button>
+                    
+                    <div class="control-group">
+                        <div class="size-selector">
+                            <label for="size-select">Size:</label>
+                            <select id="size-select">
+                                <option value="small">Small</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="large">Large</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons-container">
+                        <button id="generate-btn">Generate</button>
+                        <button id="clear-all-btn" class="clear-btn">Clear All Elements</button>
+                    </div>
                 </div>
                 
                 <div class="status-container">
                     <div id="status-message">Select a space element and style</div>
+                </div>
+                
+                <div class="instruction-container">
+                    <div class="instruction-text">
+                        <p><span class="highlight">💡 Tip:</span> Double-click on any space element to see and hear its name!</p>
+                    </div>
                 </div>
             </div>
             

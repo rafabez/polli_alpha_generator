@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DREAMLOADING Theme</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+    <div class="theme-background"></div>
+    
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 id="theme-title">Theme Title</h1>
+            </div>
+            
+            <div class="sidebar-content">
+                <div class="mobile-controls">
+                    <button id="mobile-controls-toggle" class="mobile-toggle">
+                        <span>Controls</span>
+                        <span class="toggle-icon">▼</span>
+                    </button>
+                </div>
+                
+                <div class="controls-container">
+                    <div class="control-group">
+                        <div class="element-selector">
+                            <label for="element-select">Element:</label>
+                            <select id="element-select">
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="style-selector">
+                            <label for="style-select">Style:</label>
+                            <select id="style-select">
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <div class="size-selector">
+                            <label for="size-select">Size:</label>
+                            <select id="size-select">
+                                <option value="small">Small</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="large">Large</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="buttons-container">
+                        <button id="generate-btn">Generate</button>
+                        <button id="clear-all-btn" class="clear-btn">Clear All Elements</button>
+                        <button id="back-to-intro" class="back-btn">Back to Menu</button>
+                    </div>
+                </div>
+                
+                <div class="status-container">
+                    <div id="status-message">Select an element and style</div>
+                </div>
+                
+                <div class="instruction-container">
+                    <div class="instruction-text">
+                        <p><span class="highlight">💡 Tip:</span> Double-click on any element to see and hear its name!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle Sidebar">
+                    <span class="toggle-icon">◀</span>
+                </button>
+            </div>
+        </aside>
+        
+        <main class="main-content">
+            <div id="scene" class="scene">
+                <!-- Generated elements will be added here -->
+            </div>
+        </main>
+    </div>
+    
+    <div id="loading-indicator" class="loading-indicator hidden"></div>
+    
+    <script src="theme_data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

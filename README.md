@@ -6,7 +6,7 @@ The **Polli Alpha Generator** is a web-based tool that utilizes the Pollinations
 ![Screenshot](https://www.interzone.art.br/polli_alpha/screenshot.png)
 
 ## Features
-- **Image Generation**: Generate images using various models and parameters.
+- **Image Generation**: Generate images using flux or turbo models and parameters.
 - **Background Removal**: Automatic removal of backgrounds using a green screen approach.
 - **Responsive Design**: Works seamlessly on both desktop and mobile devices.
 - **User-Friendly Interface**: Intuitive layout for easy navigation and image generation.

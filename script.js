@@ -154,10 +154,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const width = widthInput.value;
         const height = heightInput.value;
         const model = modelSelect.value;
-        const seed = seedInput.value;
         const enhance = enhancePromptCheckbox.checked;
         const privateImg = privateCheckbox.checked;
         const noLogo = noLogoCheckbox.checked;
+        
+        // Generate a random seed if not explicitly set
+        const manualSeed = seedInput.value.trim();
+        const seed = manualSeed || Math.floor(Math.random() * 1000000000).toString();
         
         // Create the URL with parameters
         // Always add the background removal prompt since we're automating it
@@ -167,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add parameters
         const params = [];
         if (model) params.push(`model=${model}`);
-        if (seed) params.push(`seed=${seed}`);
+        params.push(`seed=${seed}`); // Always include a seed (random or manual)
         params.push(`width=${width}`);
         params.push(`height=${height}`);
         if (enhance) params.push('enhance=true');

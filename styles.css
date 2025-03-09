@@ -10,7 +10,7 @@
     --border-radius: 8px;
     --transition: all 0.3s ease;
     --scrollbar-width: 8px;
-    --header-height: 70px;
+    --header-height: 40px;
 }
 
 * {
@@ -56,22 +56,21 @@ body {
 
 /* Header Styles */
 header {
-    background-color: var(--medium-bg);
-    padding: 1rem 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    position: relative;
+    background-color: var(--dark-bg);
+    color: white;
+    padding: 0.5rem 1rem;
+    position: sticky;
+    top: 0;
     z-index: 10;
-    height: var(--header-height);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .logo h1 {
-    font-size: 1.8rem;
-    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-transform: uppercase;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
     letter-spacing: 1px;
+    color: var(--accent-color);
 }
 
 /* Main Container */
@@ -179,34 +178,32 @@ main {
 }
 
 .image-container {
-    width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    background-color: var(--dark-bg);
     border-radius: var(--border-radius);
-    background-color: var(--medium-bg);
-    padding: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     position: relative;
-    overflow: hidden; /* Prevent scrolling in image container */
 }
 
 .image-view {
     position: relative;
     width: 100%;
-    height: calc(100% - 60px); /* Leave space for controls */
-    overflow: hidden;
-    background-color: var(--light-bg);
-    border-radius: var(--border-radius);
+    height: calc(100% - 60px);
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
-.original-image-container,
-.transparent-image-container {
+.original-image-container, .transparent-image-container {
     position: absolute;
     top: 0;
     left: 0;
@@ -215,6 +212,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .original-image-container {
@@ -222,11 +220,16 @@ main {
     z-index: 1;
 }
 
-.original-image-container img,
-.transparent-image-container img {
+#original-image, #transparent-image {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+    display: none; /* Hide initially */
+}
+
+/* Hide the default alt text and icon */
+#original-image:not([src]), #transparent-image:not([src]) {
+    display: none;
 }
 
 .slider-handle {
@@ -300,9 +303,14 @@ main {
 
 /* Prompt Container in Sidebar */
 .prompt-container {
-    margin-top: 1.5rem;
-    border-top: 1px solid var(--light-bg);
-    padding-top: 1.5rem;
+    margin-top: 1rem;
+    width: 100%;
+    border-top: none; /* Remove any top border */
+    padding-top: 0; /* Remove any top padding */
+}
+
+.prompt-container .setting-group {
+    margin-bottom: 0.5rem;
 }
 
 #generate-btn, #fix-bg-btn {

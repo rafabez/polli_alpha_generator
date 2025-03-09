@@ -3,7 +3,7 @@
 ## Overview
 The **Polli Alpha Generator** is a web-based tool that utilizes the Pollinations API to generate high-quality images based on user prompts. The application features automatic background removal, allowing users to create images with transparent backgrounds effortlessly.
 
-![Screenshot](https://www.interzone.art.br/polli_alpha/screenshot.webp)
+![Screenshot](https://www.interzone.art.br/polli_alpha/screenshot.png)
 
 ## Features
 - **Image Generation**: Generate images using various models and parameters.

@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDragging = false;
     let currentOriginalImageUrl = null;
     let lastGeneratedPrompt = null;
+    let lastEnhancedPrompt = null;
     const isMobile = window.innerWidth <= 768;
     
     // Check if images are already loaded
@@ -121,22 +122,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('download-original-btn').addEventListener('click', () => {
         if (currentOriginalImageUrl) {
             // Create a sanitized filename from the prompt
-            const cleanPrompt = lastGeneratedPrompt
+            // Use the enhanced prompt when available (for better filenames)
+            const promptToUse = lastEnhancedPrompt || lastGeneratedPrompt;
+            const cleanPrompt = promptToUse
                 .replace(/[^\w\s-]/g, '') // Remove special characters
                 .trim()
                 .replace(/\s+/g, '_') // Replace spaces with underscores
                 .substring(0, 50); // Limit length
             
-            const filename = `polli-original_${cleanPrompt}.png`;
+            // Open in a new tab instead of downloading directly
+            // This prevents navigating away from the app
+            window.open(currentOriginalImageUrl, '_blank');
             
-            const link = document.createElement('a');
-            link.href = currentOriginalImageUrl;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Hide the menu after download
+            // Hide the menu after opening the tab
             document.querySelector('.download-menu').classList.remove('active');
         }
     });
@@ -145,7 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('download-alpha-btn').addEventListener('click', () => {
         if (transparentImage.src) {
             // Create a sanitized filename from the prompt
-            const cleanPrompt = lastGeneratedPrompt
+            // Use the enhanced prompt when available (for better filenames)
+            const promptToUse = lastEnhancedPrompt || lastGeneratedPrompt;
+            const cleanPrompt = promptToUse
                 .replace(/[^\w\s-]/g, '') // Remove special characters
                 .trim()
                 .replace(/\s+/g, '_') // Replace spaces with underscores
@@ -224,6 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Create the URL with parameters
         // Always add the background removal prompt since we're automating it
         let finalPrompt = prompt + ", with bright green screen background, flat solid chroma key green background with no shadows or gradients, ensure subject has no green elements, subject well-separated from background for easy background removal";
+        
+        // Store the enhanced prompt for filenames
+        lastEnhancedPrompt = finalPrompt;
+        
         let baseUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}`;
         
         // Add parameters

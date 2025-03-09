@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polli Alpha Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Polli Alpha Generator</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <aside class="sidebar">
+                <div class="settings-panel">
+                    <h3>Image Settings</h3>
+                    
+                    <div class="setting-group">
+                        <label for="model-select">Model</label>
+                        <select id="model-select">
+                            <option value="" selected>Default</option>
+                            <option value="flux">Flux</option>
+                            <option value="turbo">Turbo</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="width">Width</label>
+                        <input type="number" id="width" value="1024" min="256" max="2048" step="64">
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="height">Height</label>
+                        <input type="number" id="height" value="1024" min="256" max="2048" step="64">
+                    </div>
+
+                    <div class="setting-group checkbox">
+                        <input type="checkbox" id="enhance-prompt">
+                        <label for="enhance-prompt">Enhance Prompt</label>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="seed">Seed (optional)</label>
+                        <input type="number" id="seed" placeholder="Random">
+                    </div>
+
+                    <h3>Background Removal</h3>
+                    <div class="setting-group">
+                        <label for="bg-tolerance">Color Tolerance</label>
+                        <input type="range" id="bg-tolerance" min="10" max="120" value="60">
+                        <span id="tolerance-value">60</span>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="green-intensity">Green Intensity</label>
+                        <input type="range" id="green-intensity" min="1.0" max="2.0" value="1.5" step="0.1">
+                        <span id="intensity-value">1.5</span>
+                    </div>
+
+                    <div class="setting-group checkbox">
+                        <input type="checkbox" id="private-image" checked>
+                        <label for="private-image">Private Image</label>
+                    </div>
+
+                    <div class="setting-group checkbox">
+                        <input type="checkbox" id="no-logo">
+                        <label for="no-logo">Hide Logo</label>
+                    </div>
+                    
+                    <div class="prompt-container">
+                        <div class="setting-group">
+                            <label for="prompt-input">Image Prompt</label>
+                            <textarea id="prompt-input" placeholder="Describe the image you want to generate..."></textarea>
+                        </div>
+                        <button id="generate-btn"><i class="fas fa-wand-magic-sparkles"></i> Generate</button>
+                        <button id="fix-bg-btn" class="hidden"><i class="fas fa-eraser"></i> Fix BG Alpha</button>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="content">
+                <div class="image-container">
+                    <div class="image-view">
+                        <div class="original-image-container">
+                            <img id="original-image" alt="Generated Image">
+                        </div>
+                        <div class="transparent-image-container">
+                            <img id="transparent-image" alt="Transparent Background Image">
+                        </div>
+                        <div id="slider-handle" class="slider-handle">
+                            <div class="slider-line"></div>
+                        </div>
+                    </div>
+                    <div class="image-controls">
+                        <button id="enlarge-btn" class="control-btn" disabled><i class="fas fa-expand"></i></button>
+                        <button id="download-btn" class="control-btn" disabled><i class="fas fa-download"></i></button>
+                    </div>
+                </div>
+                <div id="loading-indicator" class="loading-indicator hidden">
+                    <div class="spinner"></div>
+                    <p>Generating your image...</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <img id="modal-image" alt="Full Size Image">
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

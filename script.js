@@ -104,6 +104,65 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modal) {
             modal.style.display = 'none';
         }
+        
+        // Hide download menu when clicking outside
+        if (!e.target.closest('.download-container')) {
+            document.querySelector('.download-menu').classList.remove('active');
+        }
+    });
+    
+    // Download menu functionality
+    downloadBtn.addEventListener('click', () => {
+        const downloadMenu = document.querySelector('.download-menu');
+        downloadMenu.classList.toggle('active');
+    });
+    
+    // Download original image
+    document.getElementById('download-original-btn').addEventListener('click', () => {
+        if (currentOriginalImageUrl) {
+            // Create a sanitized filename from the prompt
+            const cleanPrompt = lastGeneratedPrompt
+                .replace(/[^\w\s-]/g, '') // Remove special characters
+                .trim()
+                .replace(/\s+/g, '_') // Replace spaces with underscores
+                .substring(0, 50); // Limit length
+            
+            const filename = `polli-original_${cleanPrompt}.png`;
+            
+            const link = document.createElement('a');
+            link.href = currentOriginalImageUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Hide the menu after download
+            document.querySelector('.download-menu').classList.remove('active');
+        }
+    });
+    
+    // Download alpha (transparent) image
+    document.getElementById('download-alpha-btn').addEventListener('click', () => {
+        if (transparentImage.src) {
+            // Create a sanitized filename from the prompt
+            const cleanPrompt = lastGeneratedPrompt
+                .replace(/[^\w\s-]/g, '') // Remove special characters
+                .trim()
+                .replace(/\s+/g, '_') // Replace spaces with underscores
+                .substring(0, 50); // Limit length
+            
+            const filename = `polli-alpha_${cleanPrompt}.png`;
+            
+            const link = document.createElement('a');
+            link.href = transparentImage.src;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Hide the menu after download
+            document.querySelector('.download-menu').classList.remove('active');
+        }
     });
     
     // Generate image functionality
@@ -413,16 +472,4 @@ document.addEventListener('DOMContentLoaded', () => {
         enlargeBtn.disabled = false;
         downloadBtn.disabled = false;
     }
-    
-    // Download functionality
-    downloadBtn.addEventListener('click', () => {
-        // Always download the transparent version since background removal is automatic
-        const imageToDownload = transparentImage.src;
-        const link = document.createElement('a');
-        link.href = imageToDownload;
-        link.download = `polli-image-${new Date().getTime()}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    });
 });

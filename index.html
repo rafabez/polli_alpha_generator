@@ -4,6 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Polli Alpha Generator</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Polli Alpha Generator">
+    <meta name="description" content="Generate high-quality images with automatic transparent backgrounds using the Pollinations API.">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.interzone.art.br/polli_alpha/">
+    <meta property="og:title" content="Polli Alpha Generator">
+    <meta property="og:description" content="Generate high-quality images with automatic transparent backgrounds using the Pollinations API.">
+    <meta property="og:image" content="https://www.interzone.art.br/polli_alpha/polli_alpha_thumb.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.interzone.art.br/polli_alpha/">
+    <meta property="twitter:title" content="Polli Alpha Generator">
+    <meta property="twitter:description" content="Generate high-quality images with automatic transparent backgrounds using the Pollinations API.">
+    <meta property="twitter:image" content="https://www.interzone.art.br/polli_alpha/polli_alpha_thumb.png">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -99,7 +119,13 @@
                     </div>
                     <div class="image-controls">
                         <button id="enlarge-btn" class="control-btn" disabled><i class="fas fa-expand"></i></button>
-                        <button id="download-btn" class="control-btn" disabled><i class="fas fa-download"></i></button>
+                        <div class="download-container">
+                            <button id="download-btn" class="control-btn" disabled><i class="fas fa-download"></i></button>
+                            <div class="download-menu">
+                                <button id="download-original-btn">Download Original</button>
+                                <button id="download-alpha-btn">Download Alpha</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="loading-indicator" class="loading-indicator hidden">

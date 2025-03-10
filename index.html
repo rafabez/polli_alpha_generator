@@ -71,6 +71,10 @@
                         <input type="checkbox" id="enhance-prompt" checked>
                         <label for="enhance-prompt">Enhance Prompt</label>
                     </div>
+                    <div class="setting-group checkbox">
+                        <input type="checkbox" id="white-bg">
+                        <label for="white-bg">White BG</label>
+                    </div>
 
                     <div class="setting-group checkbox">
                         <input type="checkbox" id="private-image" checked>
@@ -86,21 +90,6 @@
                         <label for="seed">Seed (optional)</label>
                         <input type="number" id="seed" placeholder="Random">
                     </div>
-
-                    <h3>Background Removal</h3>
-                    <div class="setting-group">
-                        <label for="bg-tolerance">Color Tolerance</label>
-                        <input type="range" id="bg-tolerance" min="10" max="120" value="60">
-                        <span id="tolerance-value">60</span>
-                    </div>
-
-                    <div class="setting-group">
-                        <label for="green-intensity">Green Intensity</label>
-                        <input type="range" id="green-intensity" min="1.0" max="2.0" value="1.5" step="0.1">
-                        <span id="intensity-value">1.5</span>
-                    </div>
-                    
-                    <button id="fix-bg-btn" class="hidden"><i class="fas fa-eraser"></i> Fix BG Alpha</button>
                 </div>
             </aside>
 

@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const promptInput = document.getElementById('prompt-input');
     const generateBtn = document.getElementById('generate-btn');
-    const fixBgBtn = document.getElementById('fix-bg-btn');
     const originalImage = document.getElementById('original-image');
     const transparentImage = document.getElementById('transparent-image');
     const sliderHandle = document.getElementById('slider-handle');
@@ -18,11 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const widthInput = document.getElementById('width');
     const heightInput = document.getElementById('height');
     const enhancePromptCheckbox = document.getElementById('enhance-prompt');
+    const whiteBgCheckbox = document.getElementById('white-bg');
     const seedInput = document.getElementById('seed');
-    const bgToleranceSlider = document.getElementById('bg-tolerance');
-    const toleranceValue = document.getElementById('tolerance-value');
-    const greenIntensitySlider = document.getElementById('green-intensity');
-    const intensityValue = document.getElementById('intensity-value');
     const privateCheckbox = document.getElementById('private-image');
     const noLogoCheckbox = document.getElementById('no-logo');
 
@@ -39,14 +35,156 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadBtn.disabled = true;
     }
 
-    // Update tolerance value display
-    bgToleranceSlider.addEventListener('input', () => {
-        toleranceValue.textContent = bgToleranceSlider.value;
+    // Modal functionality
+    enlargeBtn.addEventListener('click', () => {
+        if (transparentImage.complete && transparentImage.naturalWidth !== 0) {
+            // Use canvas to create a fresh copy of the image for the modal
+            // This avoids blob URL issues
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = transparentImage.naturalWidth;
+            canvas.height = transparentImage.naturalHeight;
+            
+            // Draw the transparent image to the canvas
+            ctx.drawImage(transparentImage, 0, 0);
+            
+            // Convert to a new data URL
+            try {
+                const dataURL = canvas.toDataURL('image/png');
+                modalImage.src = dataURL;
+                modal.style.display = 'flex';
+            } catch (error) {
+                console.error('Failed to create image for modal:', error);
+                alert('Sorry, there was an error displaying the enlarged image.');
+            }
+        } else {
+            console.error('Image not fully loaded');
+            alert('Please wait for the image to fully load before expanding.');
+        }
     });
 
-    // Update green intensity value display
-    greenIntensitySlider.addEventListener('input', () => {
-        intensityValue.textContent = greenIntensitySlider.value;
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+
+        // Hide download menu when clicking outside
+        if (!e.target.closest('.download-container')) {
+            document.querySelector('.download-menu').classList.remove('active');
+        }
+    });
+
+    // Download menu functionality
+    downloadBtn.addEventListener('click', () => {
+        const downloadMenu = document.querySelector('.download-menu');
+        downloadMenu.classList.toggle('active');
+    });
+
+    // Download original image
+    document.getElementById('download-original-btn').addEventListener('click', () => {
+        if (currentOriginalImageUrl) {
+            // Create a sanitized filename from the prompt
+            // Use the enhanced prompt when available (for better filenames)
+            const promptToUse = lastEnhancedPrompt || lastGeneratedPrompt;
+            const cleanPrompt = promptToUse
+                .replace(/[^\w\s-]/g, '') // Remove special characters
+                .trim()
+                .replace(/\s+/g, '_') // Replace spaces with underscores
+                .substring(0, 50); // Limit length
+            
+            const filename = `polli-original_${cleanPrompt}.png`;
+
+            // Create a temporary canvas to convert the image to a downloadable format
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const tempImg = new Image();
+            tempImg.crossOrigin = "Anonymous";
+            
+            tempImg.onload = function() {
+                canvas.width = tempImg.width;
+                canvas.height = tempImg.height;
+                ctx.drawImage(tempImg, 0, 0);
+                
+                // Convert to data URL and trigger download
+                try {
+                    const dataURL = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.href = dataURL;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } catch (e) {
+                    console.error('Error creating download:', e);
+                    // Fallback to open in new tab if download fails
+                    window.open(currentOriginalImageUrl, '_blank');
+                }
+            };
+            
+            tempImg.onerror = function() {
+                console.error('Failed to load image for download');
+                // Fallback to direct opening
+                window.open(currentOriginalImageUrl, '_blank');
+            };
+            
+            tempImg.src = currentOriginalImageUrl;
+
+            // Hide the menu after download
+            document.querySelector('.download-menu').classList.remove('active');
+        }
+    });
+
+    // Download alpha (transparent) image
+    document.getElementById('download-alpha-btn').addEventListener('click', () => {
+        if (transparentImage.src && transparentImage.complete) {
+            // Create a sanitized filename from the prompt
+            // Use the enhanced prompt when available (for better filenames)
+            const promptToUse = lastEnhancedPrompt || lastGeneratedPrompt;
+            const cleanPrompt = promptToUse
+                .replace(/[^\w\s-]/g, '') // Remove special characters
+                .trim()
+                .replace(/\s+/g, '_') // Replace spaces with underscores
+                .substring(0, 50); // Limit length
+
+            const filename = `polli-alpha_${cleanPrompt}.png`;
+
+            // Create a canvas to ensure we're downloading a fresh copy of the image
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = transparentImage.naturalWidth;
+            canvas.height = transparentImage.naturalHeight;
+            ctx.drawImage(transparentImage, 0, 0);
+            
+            // Convert to data URL and trigger download
+            try {
+                canvas.toBlob((blob) => {
+                    const blobUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Clean up the blob URL after download starts
+                    setTimeout(() => {
+                        URL.revokeObjectURL(blobUrl);
+                    }, 100);
+                }, 'image/png');
+            } catch (e) {
+                console.error('Error downloading alpha image:', e);
+                alert('Failed to download the transparent image. Please try again.');
+            }
+
+            // Hide the menu after download
+            document.querySelector('.download-menu').classList.remove('active');
+        } else {
+            alert('Transparent image is not ready yet. Please wait for it to finish loading.');
+        }
     });
 
     // Slider functionality
@@ -90,108 +228,8 @@ document.addEventListener('DOMContentLoaded', () => {
         isDragging = false;
     }
 
-    // Modal functionality
-    enlargeBtn.addEventListener('click', () => {
-        // Use the transparent image for the modal since background removal is automatic
-        modalImage.src = transparentImage.src;
-        modal.style.display = 'flex';
-    });
-
-    closeModal.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
-
-        // Hide download menu when clicking outside
-        if (!e.target.closest('.download-container')) {
-            document.querySelector('.download-menu').classList.remove('active');
-        }
-    });
-
-    // Download menu functionality
-    downloadBtn.addEventListener('click', () => {
-        const downloadMenu = document.querySelector('.download-menu');
-        downloadMenu.classList.toggle('active');
-    });
-
-    // Download original image
-    document.getElementById('download-original-btn').addEventListener('click', () => {
-        if (currentOriginalImageUrl) {
-            // Create a sanitized filename from the prompt
-            // Use the enhanced prompt when available (for better filenames)
-            const promptToUse = lastEnhancedPrompt || lastGeneratedPrompt;
-            const cleanPrompt = promptToUse
-                .replace(/[^\w\s-]/g, '') // Remove special characters
-                .trim()
-                .replace(/\s+/g, '_') // Replace spaces with underscores
-                .substring(0, 50); // Limit length
-
-            // Open in a new tab instead of downloading directly
-            // This prevents navigating away from the app
-            window.open(currentOriginalImageUrl, '_blank');
-
-            // Hide the menu after opening the tab
-            document.querySelector('.download-menu').classList.remove('active');
-        }
-    });
-
-    // Download alpha (transparent) image
-    document.getElementById('download-alpha-btn').addEventListener('click', () => {
-        if (transparentImage.src) {
-            // Create a sanitized filename from the prompt
-            // Use the enhanced prompt when available (for better filenames)
-            const promptToUse = lastEnhancedPrompt || lastGeneratedPrompt;
-            const cleanPrompt = promptToUse
-                .replace(/[^\w\s-]/g, '') // Remove special characters
-                .trim()
-                .replace(/\s+/g, '_') // Replace spaces with underscores
-                .substring(0, 50); // Limit length
-
-            const filename = `polli-alpha_${cleanPrompt}.png`;
-
-            const link = document.createElement('a');
-            link.href = transparentImage.src;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Hide the menu after download
-            document.querySelector('.download-menu').classList.remove('active');
-        }
-    });
-
     // Generate image functionality
     generateBtn.addEventListener('click', generateImage);
-
-    // Fix background functionality
-    fixBgBtn.addEventListener('click', () => {
-        if (currentOriginalImageUrl) {
-            // Show loading
-            loadingIndicator.classList.remove('hidden');
-
-            // Process with updated background removal settings
-            const width = widthInput.value;
-            const height = heightInput.value;
-            processWithBackgroundRemoval(currentOriginalImageUrl, transparentImage, { width, height }).then(() => {
-                // Show the Fix BG Alpha button and enable UI elements
-                fixBgBtn.classList.remove('hidden');
-                loadingIndicator.classList.add('hidden');
-                enlargeBtn.disabled = false;
-                downloadBtn.disabled = false;
-                transparentImage.style.display = 'block';
-            }).catch(err => {
-                console.error('Background removal failed:', err);
-                loadingIndicator.classList.add('hidden');
-            });
-        } else {
-            alert('Please generate an image first before fixing the background.');
-        }
-    });
 
     // Allow pressing Ctrl+Enter in the prompt textarea
     promptInput.addEventListener('keydown', (e) => {
@@ -217,12 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
         transparentImage.style.display = 'none';
         enlargeBtn.disabled = true;
         downloadBtn.disabled = true;
-        fixBgBtn.classList.add('hidden');
 
         // Get settings
+        const model = modelSelect.value;
         const width = widthInput.value;
         const height = heightInput.value;
-        const model = modelSelect.value;
         const enhance = enhancePromptCheckbox.checked;
         const privateImg = privateCheckbox.checked;
         const noLogo = noLogoCheckbox.checked;
@@ -233,7 +270,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Create the URL with parameters
         // Always add the background removal prompt since we're automating it
-        let finalPrompt = prompt + ", with white flat solid background with no shadows or gradients.";
+        const whiteBgString = ", with white flat solid background with no shadows or gradients.";
+        let finalPrompt = prompt + (whiteBgCheckbox.checked ? whiteBgString : "");
 
         // Store the enhanced prompt for filenames
         lastEnhancedPrompt = finalPrompt;
@@ -244,8 +282,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const params = [];
         if (model) params.push(`model=${model}`);
         params.push(`seed=${seed}`); // Always include a seed (random or manual)
-        params.push(`width=${width}`);
-        params.push(`height=${height}`);
+        params.push(`width=${width}`); // Use the width input value
+        params.push(`height=${height}`); // Use the height input value
         if (enhance) params.push('enhance=true');
         if (privateImg) params.push('private=true');
         if (noLogo) params.push('nologo=true');
@@ -263,9 +301,8 @@ document.addEventListener('DOMContentLoaded', () => {
             originalImage.style.display = 'block';
 
             // Process with background removal and update the transparent image
-            processWithBackgroundRemoval(apiUrl, transparentImage, { width, height }).then(() => {
-                // Show the Fix BG Alpha button and enable UI elements
-                fixBgBtn.classList.remove('hidden');
+            processWithBackgroundRemoval(apiUrl, transparentImage, { width: parseInt(width), height: parseInt(height) }).then(() => {
+                // Enable UI elements
                 loadingIndicator.classList.add('hidden');
                 enlargeBtn.disabled = false;
                 downloadBtn.disabled = false;
@@ -469,8 +506,8 @@ async function fallbackToClientSide(blobUrl, img, options) {
                 }
             }
 
-            // Remove the background with some color tolerance
-            const tolerance = 60; // Decreased from 100 to make background removal less aggressive
+            // Fixed tolerance for background removal - previously was using the slider value
+            const tolerance = 60; // Default value
 
             // Process each pixel
             for (let i = 0; i < pixels.length; i += 4) {

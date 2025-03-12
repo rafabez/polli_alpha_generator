@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Settings elements
     const modelSelect = document.getElementById('model-select');
-    const widthInput = document.getElementById('width');
-    const heightInput = document.getElementById('height');
+    const aspectRatioSelect = document.getElementById('aspect-ratio-select');
+    const resolutionSelect = document.getElementById('resolution-select');
     const enhancePromptCheckbox = document.getElementById('enhance-prompt');
     const whiteBgCheckbox = document.getElementById('white-bg');
     const seedInput = document.getElementById('seed');
@@ -28,6 +28,35 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastGeneratedPrompt = null;
     let lastEnhancedPrompt = null;
     const isMobile = window.innerWidth <= 768;
+
+    // Resolution presets (pixels)
+    const resolutionPresets = {
+        high: 1024,
+        medium: 768,
+        low: 512
+    };
+
+    // Function to calculate dimensions based on aspect ratio and resolution
+    function calculateDimensions(aspectRatio, resolution) {
+        const baseSize = resolutionPresets[resolution];
+        const [width, height] = aspectRatio.split(':').map(Number);
+        
+        // Calculate dimensions while maintaining aspect ratio
+        // and ensuring the longer side is at the resolution preset value
+        if (width >= height) {
+            // Landscape or square
+            return {
+                width: baseSize,
+                height: Math.round(baseSize * (height / width))
+            };
+        } else {
+            // Portrait
+            return {
+                width: Math.round(baseSize * (width / height)),
+                height: baseSize
+            };
+        }
+    }
 
     // Check if images are already loaded
     if (!originalImage.complete || !transparentImage.complete) {
@@ -258,11 +287,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Get settings
         const model = modelSelect.value;
-        const width = widthInput.value;
-        const height = heightInput.value;
+        const aspectRatio = aspectRatioSelect.value;
+        const resolution = resolutionSelect.value;
         const enhance = enhancePromptCheckbox.checked;
         const privateImg = privateCheckbox.checked;
         const noLogo = noLogoCheckbox.checked;
+
+        // Calculate dimensions based on aspect ratio and resolution
+        const { width, height } = calculateDimensions(aspectRatio, resolution);
 
         // Generate a random seed if not explicitly set
         const manualSeed = seedInput.value.trim();
@@ -282,8 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const params = [];
         if (model) params.push(`model=${model}`);
         params.push(`seed=${seed}`); // Always include a seed (random or manual)
-        params.push(`width=${width}`); // Use the width input value
-        params.push(`height=${height}`); // Use the height input value
+        params.push(`width=${width}`); // Use calculated width
+        params.push(`height=${height}`); // Use calculated height
         if (enhance) params.push('enhance=true');
         if (privateImg) params.push('private=true');
         if (noLogo) params.push('nologo=true');
@@ -301,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
             originalImage.style.display = 'block';
 
             // Process with background removal and update the transparent image
-            processWithBackgroundRemoval(apiUrl, transparentImage, { width: parseInt(width), height: parseInt(height) }).then(() => {
+            processWithBackgroundRemoval(apiUrl, transparentImage, { width, height }).then(() => {
                 // Enable UI elements
                 loadingIndicator.classList.add('hidden');
                 enlargeBtn.disabled = false;

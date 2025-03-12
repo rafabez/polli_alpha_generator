@@ -50,13 +50,23 @@
                     </div>
 
                     <div class="setting-group">
-                        <label for="width">Width</label>
-                        <input type="number" id="width" value="1024" min="256" max="2048" step="64">
+                        <label for="aspect-ratio-select">Aspect Ratio</label>
+                        <select id="aspect-ratio-select">
+                            <option value="1:1" selected>1:1 (Square)</option>
+                            <option value="9:16">9:16 (Portrait)</option>
+                            <option value="3:4">3:4 (Portrait)</option>
+                            <option value="4:3">4:3 (Landscape)</option>
+                            <option value="16:9">16:9 (Landscape)</option>
+                        </select>
                     </div>
 
                     <div class="setting-group">
-                        <label for="height">Height</label>
-                        <input type="number" id="height" value="1024" min="256" max="2048" step="64">
+                        <label for="resolution-select">Resolution</label>
+                        <select id="resolution-select">
+                            <option value="high" selected>High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
                     </div>
                     
                     <div class="prompt-container">
